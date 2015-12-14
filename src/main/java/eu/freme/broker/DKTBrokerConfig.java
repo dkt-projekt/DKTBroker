@@ -21,28 +21,31 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import eu.freme.broker.edocumentstorage.api.EDocumentStorageService;
+import eu.freme.broker.eservices.DocumentAnalyzer;
 import eu.freme.broker.esesame.api.ESesameService;
+import eu.freme.eservices.eentity.api.EEntityService;
 
 
 //@SpringBootApplication
 //@ComponentScan("de.dkt.eservices.eopennlp.api")
 @Configuration
 public class DKTBrokerConfig {
+
 	
-	@Value("${documentstorage.storage}")
-	String documentStorageLocation;
-	
-	@Value("${sesame.storage}")
-	String sesameStorageLocation;
+//	@Bean
+//	public ESesameService getSesameApi(){
+//		return new ESesameService(sesameStorageLocation);
+//	}
+//
+//	
+//	@Bean
+//	public EDocumentStorageService getDocumentStorageApi(){
+//		return new EDocumentStorageService();
+//	}
 	
 	@Bean
-	public ESesameService getSesameApi(){
-		return new ESesameService(sesameStorageLocation);
-	}
-	
-	@Bean
-	public EDocumentStorageService getDocumentStorageApi(){
-		return new EDocumentStorageService();
+	public EEntityService getEntityServiceApi(){
+		return new EEntityService();
 	}
 	
 }
