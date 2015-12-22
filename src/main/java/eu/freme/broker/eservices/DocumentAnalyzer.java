@@ -34,6 +34,7 @@ import eu.freme.broker.eweka.api.EWekaService;
 import eu.freme.broker.filemanagement.FileFactory;
 import eu.freme.broker.niftools.NIFReader;
 import eu.freme.broker.niftools.NIFWriter;
+import eu.freme.common.conversion.rdf.RDFConstants.RDFSerialization;
 import eu.freme.common.conversion.rdf.RDFConversionService;
 
 @RestController
@@ -111,17 +112,25 @@ public class DocumentAnalyzer extends BaseRestController{
 		        	
 		        	String content2 = response1.getBody();
 		        	
+		        	System.out.println("INPUT FOR NLP"+content2);
+		        	
 		        	ResponseEntity<String> response2 = openNLPService.analyzeText(content2, language, openNLPAnalysis, openNLPModels);
 		        	
 		        	String content3 = response2.getBody();
 		        	
+		        	System.out.println("INPUT FOR SESAME"+content3);
+		        	
 		        	ResponseEntity<String> response3 = sesameService.storeEntitiesFromString(sesameStorageName, content3, "NIF");
 		        	
 		        	String content4 = response3.getBody();
+		        	System.out.println("OUTPUT OF SESAME"+content4);
+		        	
+		        	System.out.println("INPUT FOR LUCENE"+content3);
 		        	
 		        	ResponseEntity<String> response4 = luceneService.callLuceneIndexing("string", content3, "NIF", language, luceneFields, luceneAnalyzers, luceneIndexName, luceneCreate);
 		        	
 		        	String content5 = response4.getBody();
+		        	System.out.println("OUTPUT OF LUCENE"+content5);
 					
 //		        	ResponseEntity<String> response5 = wekaService.;
 //		        	
@@ -193,31 +202,36 @@ public class DocumentAnalyzer extends BaseRestController{
 
 			String content2 = NIFReader.model2String(model);
 			
+        	System.out.println("INPUT FOR NLP"+content2);
+
         	ResponseEntity<String> response2 = openNLPService.analyzeText(content2, language, openNLPAnalysis, openNLPModels);
         	
         	String content3 = response2.getBody();
+        	System.out.println("OUTPUT OF NLP"+content3);
         	
 //        	ResponseEntity<String> response3 = sesameService.storeEntitiesFromString(sesameStorageName, content3, "NIF");
 //        	
 //        	String content4 = response3.getBody();
         	
+        	System.out.println("INPUT FOR LUCENE"+content2);
+
         	ResponseEntity<String> response4 = luceneService.callLuceneExtraction("nif", content3, language, luceneIndexName, luceneFields, luceneAnalyzers, 30);
         	
         	String content5 = response4.getBody();
 
         	//Merge results from document retrieval and NIF??? HOW???
+
         	
         	
 			Model outModel = ModelFactory.createDefaultModel();
 			
 			//TODO Convert output to be seen as NIF or as Website.
-			
 //			
 //			
 			HttpHeaders responseHeaders = new HttpHeaders();
+			responseHeaders.add("Content-Type", RDFSerialization.JSON.getMimeType());
 //			
 //			StringWriter writer = new StringWriter();
-//			responseHeaders.add("Content-Type", "RDF/XML");
 //			outModel.write(writer, "RDF/XML");
 //			try {
 //				writer.close();
